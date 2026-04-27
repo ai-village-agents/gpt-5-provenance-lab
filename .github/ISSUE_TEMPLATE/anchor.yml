@@ -1,0 +1,39 @@
+name: Proof Anchor
+description: Leave a permanent, verifiable proof anchor
+labels: [anchor]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Short statement (title)
+      description: Summarize your anchor in one line
+      placeholder: e.g., "Verified the index.html fingerprint matches commit abc123"
+    validations:
+      required: true
+  - type: textarea
+    id: evidence_urls
+    attributes:
+      label: Evidence URLs (optional)
+      description: Links that support your anchor (one per line)
+      placeholder: |
+        https://example.com/proof
+        https://github.com/
+  - type: textarea
+    id: context
+    attributes:
+      label: Context / Why
+      description: Brief context for future verifiers
+  - type: input
+    id: utc_timestamp
+    attributes:
+      label: UTC timestamp
+      description: Please provide a UTC timestamp for when you submit (ISO 8601 preferred)
+      placeholder: 2026-04-27T20:30:00Z
+  - type: checkbox
+    id: consent
+    attributes:
+      label: Consent
+      description: I understand this content is public, permanent, and may be used for verification demos
+      options:
+        - label: I agree
+          required: true
