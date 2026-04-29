@@ -1,0 +1,300 @@
+<!doctype html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hashing Bay  The Provenance Lab</title>
+  <style>
+    :root { --bg:#0b0e12; --fg:#e6edf3; --muted:#98a2b3; --accent:#1fb6ff; --ok:#12d17d; --warn:#f5a524; --bad:#ef4444; --chip:#1f2937; }
+      html,body{height:100%}
+      body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+      a{color:#7dd3fc}
+    header,footer{max-width:1100px;margin:0 auto;padding:16px 20px}
+    header{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid #1f2937}
+    h1{font-size:22px;margin:8px 0}
+    .badge{display:none;padding:2px 8px;border-radius:999px;background:#0ea5e9;color:#02223a;font-weight:600}
+    .badge.show{display:inline-block}
+    main{max-width:1100px;margin:0 auto;padding:20px}
+    .row{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+    .card{background:#0f1620;border:1px solid #1f2937;border-radius:10px;padding:14px}
+    .cta{display:inline-block;margin:8px 0;padding:10px 14px;border-radius:8px;background:#0284c7;color:white;text-decoration:none;font-weight:600}
+    .muted{color:var(--muted)}
+    fieldset{border:1px solid #243447;border-radius:8px;padding:10px}
+    legend{color:#93c5fd}
+    label{display:flex;align-items:center;gap:8px;margin:6px 0}
+    input[type="text"],input[type="url"],textarea{width:100%;background:#0b1220;color:var(--fg);border:1px solid #263244;border-radius:8px;padding:10px}
+    textarea{min-height:120px}
+          .src-tabs{display:flex;gap:8px;margin-bottom:8px}
+    .src-tabs button{background:#111827;color:var(--fg);border:1px solid #263244;border-radius:7px;padding:8px 10px;cursor:pointer}
+          .src-tabs button[aria-pressed="true"]{outline:2px solid #0284c7}
+    .drop{border:2px dashed #42526e;border-radius:10px;padding:18px;text-align:center}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .hash{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;word-break:break-all}
+    .hexdumps{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .hexdump{position:relative;background:#0b1220;border:1px solid #263244;border-radius:8px;padding:10px;font-family:ui-monospace,monospace;white-space:pre;overflow:auto;min-height:140px}
+    .scan{position:absolute;left:0;top:0;height:3px;width:100%;background:linear-gradient(90deg, transparent, #22d3ee 40%, transparent)}
+    @media (prefers-reduced-motion:no-preference){
+      .hexdump .scan{animation:scan 2.4s linear infinite}
+}
+    @keyframes scan{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+    .controls{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+    button.small{padding:6px 8px;border-radius:7px;border:1px solid #334155;background:#0b1220;color:var(--fg);cursor:pointer}
+          .kvs{display:grid;grid-template-columns:180px 1fr;gap:6px}
+    .chip{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--chip);font-size:12px;margin-right:6px}
+        </style>
+</head>
+<body data-tool="hashing-bay" data-commit="TBD">
+  <header>
+    <a class="cta" href="./index.html" aria-label="Back to Provenance Lab home">← Back</a>
+    <h1>Hashing Bay <span class="muted">(deterministic hashing lab)</span></h1>
+    <span id="provenanceBadge" class="badge" aria-live="polite">Provenance</span>
+    <span class="chip" title="Ambient 60 Hz tone"><label><input id="audioToggle" type="checkbox" aria-label="Ambient 60 Hz"/> Ambient 60Hz</label></span>
+  </header>
+  <main id="app">
+    <p class="muted">Compare raw vs normalized bytes. All normalization toggles are OFF by default and are only applied if you opt in, in the exact order listed. Encoding: UTF‑8 for text paths.</p>
+    <div class="row">
+            <section class="card" aria-labelledby="srcLabel">
+            <h2 id="srcLabel" style="margin-top:0">Source</h2>
+        <div class="src-tabs" role="tablist" aria-label="Source type">
+          <button id="tab-text" role="tab" aria-controls="panel-text" aria-pressed="true">Text</button>
+                    <button id="tab-file" role="tab" aria-controls="panel-file" aria-pressed="false">File</button>
+                    <button id="tab-url" role="tab" aria-controls="panel-url" aria-pressed="false">URL</button>
+                  </div>
+                  <div id="panel-text" role="tabpanel" aria-labelledby="tab-text">
+                    <label class="muted" for="textInput">Text (UTF‑8)</label>
+                    <textarea id="textInput" placeholder="Type or paste text here
+          "></textarea>
+                  </div>
+                  <div id="panel-file" role="tabpanel" aria-labelledby="tab-file" hidden>
+                    <div id="drop" class="drop" aria-label="Drag and drop a file here">Drop file here or choose below</div>
+                    <p><input id="fileInput" type="file" /> <span id="fileMeta" class="muted"></span></p>
+                  </div>
+                  <div id="panel-url" role="tabpanel" aria-labelledby="tab-url" hidden>
+                    <div class="grid-2">
+                      <input id="urlInput" type="url" placeholder="https://example.com/file.bin"/>
+                      <button id="fetchBtn" class="small" aria-label="Fetch URL bytes">Fetch</button>
+                    </div>
+                    <div class="kvs muted" style="margin-top:8px">
+                      <div>Status</div><div id="urlStatus">—</div>
+                      <div>Final URL</div><div id="finalUrl"></div>
+                      <div>Headers</div><div><pre id="headersPre" style="margin:0"></pre></div>
+                    </div>
+                  </div>
+                  <fieldset style="margin-top:12px" aria-label="Normalization steps">
+                    <legend>Normalization toggles (all OFF by default)</legend>
+          <label><input id="tglCrlf" type="checkbox"> Convert CRLF  LF</label>
+                      <label><input id="tglTrim" type="checkbox"> Trim leading/trailing whitespace</label>
+          <label><input id="tglNfc" type="checkbox"> Unicode NFC</label>
+                      <label><input id="tglUtf8" type="checkbox"> Explicit UTF‑8 re-encode</label>
+                      <div class="muted">Order: CRLF→LF, Trim, NFC, then UTF8 re-encode.</div>
+                    </fieldset>
+                    <div class="controls">
+                      <button id="runBtn" class="small">Compute digests</button>
+                      <button id="clearBtn" class="small">Clear</button>
+                      <button id="hexdumpSizeToggle" class="small" aria-pressed="false">Hexdump: 64 bytes windows</button>
+                    </div>
+                  </section>
+                  <section class="card" aria-labelledby="outLabel">
+                    <h2 id="outLabel" style="margin-top:0">Digests</h2>
+                    <div class="kvs">
+                      <div>Raw bytes</div><div><span id="rawLen">0</span> bytes</div>
+                      <div>Raw SHA‑256</div><div class="hash" id="rawSha"></div>
+                      <div>Normalized bytes</div><div><span id="normLen">0</span> bytes</div>
+                      <div>Normalized SHA‑256</div><div class="hash" id="normSha">—</div>
+                    </div>
+                    <div class="controls">
+                      <button id="copyRawBtn" class="small">Copy raw SHA</button>
+                      <button id="copyNormBtn" class="small">Copy normalized SHA</button>
+                      <button id="dlNormBtn" class="small">Download normalized bytes</button>
+                    </div>
+                    <p class="muted">Reproduce with: <code>shasum -a 256 file</code> or <code>openssl dgst -sha256 file</code>. For text: <code>printf '...'</code> | View Source + <code>?nocache=...</code> to inspect served bytes.</p>
+      </section>
+    </div>
+    <div class="row" style="margin-top:16px">
+      <section class="card" aria-labelledby="hexLabel">
+        <h2 id="hexLabel" style="margin-top:0">Hexdumps</h2>
+                    <div class="hexdumps">
+                      <div class="hexdump" aria-label="Raw hexdump first & last"><div class="scan" aria-hidden="true"></div><strong>Raw first</strong>
+                        <pre id="rawHexFirst"></pre><strong>Raw last</strong>
+                        <pre id="rawHexLast"></pre>
+                      </div>
+                      <div class="hexdump" aria-label="Normalized hexdump first & last"><div class="scan" aria-hidden="true"></div><strong>Norm first</strong>
+                        <pre id="normHexFirst"></pre><strong>Norm last</strong>
+                        <pre id="normHexLast"></pre>
+                      </div>
+                    </div>
+                  </section>
+                  <section class="card" aria-labelledby="manifestLabel">
+                    <h2 id="manifestLabel" style="margin-top:0">Reproducibility manifest</h2>
+                    <pre id="manifestPre" style="white-space:pre-wrap"></pre>
+                  </section>
+                </div>
+              </main>
+              <footer class="muted">
+                Inspectors note: Canonical evidence lives in immutable git SHAs and Issue IDs. GitHub Pages output is a time-of-serve snapshot. Use View Source plus a unique <code>?nocache=token</code> and hard refresh to examine served bytes.
+  </footer>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const textInput = $('textInput');
+  const fileInput = $('fileInput');
+  const fileMeta = $('fileMeta');
+  const drop = $('drop');
+  const urlInput = $('urlInput');
+  const fetchBtn = $('fetchBtn');
+  const urlStatus = $('urlStatus');
+  const finalUrl = $('finalUrl');
+  const headersPre = $('headersPre');
+  const runBtn = $('runBtn');
+  const clearBtn = $('clearBtn');
+  const hexdumpSizeToggle = $('hexdumpSizeToggle');
+  const tglCrlf = $('tglCrlf');
+  const tglTrim = $('tglTrim');
+  const tglNfc = $('tglNfc');
+  const tglUtf8 = $('tglUtf8');
+  const rawLen = $('rawLen');
+  const normLen = $('normLen');
+  const rawSha = $('rawSha');
+  const normSha = $('normSha');
+  const copyRawBtn = $('copyRawBtn');
+  const copyNormBtn = $('copyNormBtn');
+  const dlNormBtn = $('dlNormBtn');
+  const rawHexFirst = $('rawHexFirst');
+  const rawHexLast = $('rawHexLast');
+  const normHexFirst = $('normHexFirst');
+  const normHexLast = $('normHexLast');
+  const manifestPre = $('manifestPre');
+  const audioToggle = $('audioToggle');
+  const badge = $('provenanceBadge');
+  // Tabs
+  const tabText = $('tab-text');
+  const tabFile = $('tab-file');
+  const tabUrl = $('tab-url');
+  const panelText = $('panel-text');
+  const panelFile = $('panel-file');
+  const panelUrl = $('panel-url');
+  function selectTab(which){
+        const map = { text:[tabText,panelText], file:[tabFile,panelFile], url:[tabUrl,panelUrl] };
+    for (const [k,[btn,panel]] of Object.entries(map)){
+      const active = k===which; btn.setAttribute('aria-pressed', String(active)); panel.hidden=!active;
+    }
+    // Clear state when switching
+    buf = new Uint8Array(); srcType = which; fileMeta.textContent=''; headersPre.textContent=''; urlStatus.textContent=''; finalUrl.textContent='';
+  }
+  tabText.addEventListener('click',()=>selectTab('text'));
+  tabFile.addEventListener('click',()=>selectTab('file'));
+  tabUrl.addEventListener('click',()=>selectTab('url'));
+  // Buffers and settings
+  let buf = new Uint8Array();
+  let srcType = 'text';
+  let hexdumpWindow = 64;
+  function toHex(u8){ return Array.from(u8, b=>b.toString(16).padStart(2,'0')).join(''); }
+      async function sha256(ab){ const h = await crypto.subtle.digest('SHA-256', ab); return toHex(new Uint8Array(h)); }
+  function ascii(b){ return (b>=32 && b<=126) ? String.fromCharCode(b) : '.'; }
+  function hexdump(u8,n){
+        const len=u8.length; const take=Math.min(n,len);
+    const first=u8.slice(0,take); const last=u8.slice(len-take<0?0:len-take,len);
+    function block(arr){
+            let out='';
+      for(let i=0;i<arr.length;i+=16){
+        const slice=arr.slice(i,i+16);
+        const hex=Array.from(slice,b=>b.toString(16).padStart(2,'0')).join(' ');
+        const asc=Array.from(slice,ascii).join('');
+        out+=i.toString(16).padStart(6,'0')+': '+hex.padEnd(16*3,' ')+'  |'+asc+'|\n';
+      }
+      return out||'—';
+    }
+    return { first:block(first), last:block(last) };
+  }
+  function utf8Decode(u8){ try { return new TextDecoder('utf-8',{fatal:false}).decode(u8); } catch(e){ return new TextDecoder('utf-8').decode(u8); } }
+  function utf8Encode(str){ return new TextEncoder().encode(str); }
+  async function normalize(u8){
+    let note = { didDecode:false, replacedInvalid:false };
+    let s=null; let work=u8;
+    function ensureText(){ if(s==null){ s=utf8Decode(work); note.didDecode=true; } }
+    if(tglCrlf.checked){ ensureText(); s=s.replace(/\r\n/g,'\n'); }
+    if(tglTrim.checked){ ensureText(); s=s.replace(/^\s+|\s+$/g,''); }
+          if(tglNfc.checked){ ensureText(); if (s.normalize) s=s.normalize('NFC'); }
+    if(tglUtf8.checked){ if(s==null) s=utf8Decode(work); work=utf8Encode(s); }
+    if(s!=null && !tglUtf8.checked){ // produce bytes from text path if any text step occurred
+      work=utf8Encode(s);
+    }
+    return { bytes: new Uint8Array(work), note };
+  }
+  async function compute(){
+    // Source selection
+    if(srcType==='text'){
+      buf = utf8Encode(textInput.value||'');
+    }
+    rawLen.textContent = String(buf.length);
+    const rawDigest = (buf.length? await sha256(buf.buffer): 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+    const norm = await normalize(buf);
+    const nb = norm.bytes;
+    const normDigest = (nb.length? await sha256(nb.buffer): 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+    normLen.textContent = String(nb.length);
+    rawSha.textContent = rawDigest; normSha.textContent = normDigest;
+    const rhex = hexdump(buf, hexdumpWindow); rawHexFirst.textContent=rhex.first; rawHexLast.textContent=rhex.last;
+    const nhex = hexdump(nb, hexdumpWindow); normHexFirst.textContent=nhex.first; normHexLast.textContent=nhex.last;
+    const manifest = {
+            tool: 'Hashing Bay', commit: document.body.getAttribute('data-commit')||'TBD',
+                    source: srcType, sizes:{ raw: buf.length, normalized: nb.length }, toggles:{ crlf:tglCrlf.checked, trim:tglTrim.checked, nfc:tglNfc.checked, utf8:tglUtf8.checked },
+      order:['CRLF→LF','Trim','NFC','UTF8 re-encode'],
+              urlMeta: { status: urlStatus.textContent || null, finalUrl: finalUrl.textContent || null, headers: headersPre.textContent || null },
+              notes: { normalization: 'Applied only if toggled; deterministic order.' },
+                      timestamps:{ computed: new Date().toISOString() }
+    };
+    manifestPre.textContent = JSON.stringify(manifest, null, 2);
+    // Easter egg
+    if (normDigest === '7f66c70c77b98a16671bc79122943abd6145ab1a20175c8833971777580a76e8') {
+      badge.classList.add('show');
+    } else {
+      badge.classList.remove('show');
+    }
+  }
+  // File and DnD
+  function setBuf(u8,name,type){ buf=u8; fileMeta.textContent=`${name||'file'} — ${u8.length} bytes${type? ' — '+type: ''}`; }
+      fileInput.addEventListener('change', async (e)=>{
+        const f = e.target.files && e.target.files[0]; if(!f) return;
+    const ab = await f.arrayBuffer(); setBuf(new Uint8Array(ab), f.name, f.type||''); srcType='file';
+                               });
+  ;['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,(e)=>{e.preventDefault(); drop.style.borderColor='#38bdf8'}));
+  ;['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,(e)=>{e.preventDefault(); drop.style.borderColor='#42526e'}));
+  drop.addEventListener('drop', async (e)=>{ const f=e.dataTransfer.files&&e.dataTransfer.files[0]; if(!f) return; setBuf(new Uint8Array(await f.arrayBuffer()), f.name, f.type||''); srcType='file'; });
+      // URL fetch
+      fetchBtn.addEventListener('click', async ()=>{
+        const u = urlInput.value.trim(); if(!u){ urlStatus.textContent='No URL'; return; }
+    urlStatus.textContent='Fetching…'; headersPre.textContent=''; finalUrl.textContent='';
+    try{
+      const res = await fetch(u, { mode:'cors' });
+      finalUrl.textContent = res.url || u; urlStatus.textContent = `${res.status} ${res.statusText}`;
+      const ct = res.headers.get('Content-Type'); const cl = res.headers.get('Content-Length'); const et = res.headers.get('ETag');
+      headersPre.textContent = JSON.stringify({ 'Content-Type': ct, 'Content-Length': cl, 'ETag': et }, null, 2);
+      const ab = await res.arrayBuffer(); buf = new Uint8Array(ab); srcType='url';
+}catch(err){
+      urlStatus.textContent = 'Fetch failed (possibly CORS)';
+      headersPre.textContent = 'If CORS blocks byte access, download the file and use the File path.';
+}
+});
+  hexdumpSizeToggle.addEventListener('click',()=>{
+    hexdumpWindow = hexdumpWindow===64 ? 128 : 64;
+    hexdumpSizeToggle.textContent = hexdumpWindow===64 ? 'Hexdump: 64 bytes windows' : 'Hexdump: 128 bytes windows';
+});
+  clearBtn.addEventListener('click',()=>{ buf = new Uint8Array(); if(srcType==='text') textInput.value=''; fileMeta.textContent=''; headersPre.textContent=''; urlStatus.textContent='—'; finalUrl.textContent='—'; rawSha.textContent=normSha.textContent=''; rawLen.textContent=normLen.textContent='0'; rawHexFirst.textContent=rawHexLast.textContent=normHexFirst.textContent=normHexLast.textContent=''; badge.classList.remove('show'); });
+  runBtn.addEventListener('click', compute);
+  // Copy
+  async function copy(text){ try{ await navigator.clipboard.writeText(text); }catch(e){} }
+  copyRawBtn.addEventListener('click',()=>copy(rawSha.textContent||''));
+  copyNormBtn.addEventListener('click',()=>copy(normSha.textContent||''));
+  // Download normalized
+  dlNormBtn.addEventListener('click', async ()=>{ await compute(); const nb = JSON.parse(manifestPre.textContent).sizes.normalized; const norm = await normalize(buf); const blob = new Blob([norm.bytes], { type: 'application/octet-stream' }); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='normalized.bin'; a.click(); URL.revokeObjectURL(a.href); });
+  // Ambient audio
+  let ctx=null, osc=null, gain=null; const key='hashingbay.audio60';
+  try{ audioToggle.checked = localStorage.getItem(key)==='1'; }catch(e){}
+  function ensureAudio(){ if(ctx) return; try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); gain=ctx.createGain(); gain.gain.value=0.02; osc=ctx.createOscillator(); osc.type='sine'; osc.frequency.value=60; osc.connect(gain).connect(ctx.destination); }catch(e){} }
+  audioToggle.addEventListener('change',()=>{ if(audioToggle.checked){ ensureAudio(); try{ osc.start(); }catch(e){} try{ localStorage.setItem(key,'1'); }catch(e){} } else { try{ osc.stop(); }catch(e){} try{ localStorage.setItem(key,'0'); }catch(e){} });
+  // Default to text tab
+  selectTab('text');
+})();
+</script>
+</body>
+</html>
