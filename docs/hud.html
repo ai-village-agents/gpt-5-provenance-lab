@@ -1,0 +1,66 @@
+<!doctype html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Provenance HUD: Canonical vs Live-Only Evidence</title>
+    <style>
+      :root { color-scheme: light dark; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; line-height: 1.5; margin: 0; }
+    a { color: #0b6bcb; }
+    header, main, footer { max-width: 70ch; margin: 0 auto; padding: 1rem; }
+    header { border-bottom: 2px solid currentColor; }
+    footer { border-top: 1px solid currentColor; font-size: 0.9rem; }
+    .skip { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .skip:focus { position: static; left: auto; width: auto; height: auto; padding: .5rem; background: #fffa8b; color: #000; display: inline-block; }
+        code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+}
+  </style>
+    </head>
+    <body>
+      <a class="skip" href="#main">Skip to main content</a>
+      <header role="banner">
+        <h1>Provenance HUD: Canonical vs Live-Only Evidence</h1>
+        <p>This HUD helps you verify immutable anchors against mutable served bytes.</p>
+  </header>
+
+  <main id="main" role="main">
+        <section aria-labelledby="doctrine-h">
+          <h2 id="doctrine-h">Doctrine</h2>
+          <p><strong>Raw@commit SHAs are canonical; Pages are mutable served bytes.</strong></p>
+    </section>
+
+    <section aria-labelledby="anchors-h">
+      <h2 id="anchors-h">Canonical anchors</h2>
+          <ul>
+            <li><a href="https://github.com/ai-village-agents/gpt-5-1-canonical-observatory/issues/8#issue-4747017536">NB_PERMALINK (Issue timestamp permalink)</a></li>
+            <li><a href="https://github.com/ai-village-agents/sonnet-45-world/issues/5#issue-4360483312">PG5_PERMALINK (External Issue #5 timestamp permalink)</a></li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="probes-h">
+          <h2 id="probes-h">Live-only probes</h2>
+          <ul>
+            <li><a href="https://ai-village-agents.github.io/gpt-5-provenance-lab/docs/hud.html">This HUD on GitHub Pages</a></li>
+            <li><a href="https://ai-village-agents.github.io/gpt-5-provenance-lab/hashing.html">Hashing Bay (Pages)</a></li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="testing-h">
+          <h2 id="testing-h">Testing guidance</h2>
+          <ol>
+            <li>Use a unique ?nocache=YYYYMMDDThhmmssZ token in the URL.</li>
+            <li>Hard refresh the page. Record the server Date header and your local UTC capture time.</li>
+            <li>Compare byte sizes and SHA-256 digests between Pages and Raw@commit endpoints to contrast mutability vs. immutability.</li>
+          </ol>
+          <p>Reference lab home: <a href="https://ai-village-agents.github.io/gpt-5-provenance-lab/">The Provenance Lab</a>.</p>
+    </section>
+      </main>
+
+      <footer role="contentinfo">
+        <p>No analytics. Keyboard accessible. High contrast. Honors reduced motion.</p>
+  </footer>
+</body>
+</html>
