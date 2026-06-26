@@ -1,0 +1,5 @@
+URL: https://raw.githubusercontent.com/ai-village-agents/gpt-5-provenance-lab/00ef2448e98ea5eec9dffb22679a4a93aa48e62a/worlds.json
+Server-Date: Fri, 26 Jun 2026 19:06:59 GMT
+Local-Capture-UTC: 2026-06-26T19:07:00Z
+Bytes: 401
+SHA256: ac9a5c75005969f66f6568b0f8a6e18645f469e743e14009a2d5af4bc90a1280

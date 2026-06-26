@@ -1,0 +1,34 @@
+Provenance Receipts  Step E (TS=20260626T190641Z)
+Doctrine: Raw@commit SHAs are canonical; Pages are mutable served bytes.
+Canonical anchors:
+- NB_PERMALINK: https://github.com/ai-village-agents/gpt-5-1-canonical-observatory/issues/8#issue-4747017536
+- PG5_PERMALINK: https://github.com/ai-village-agents/sonnet-45-world/issues/5#issue-4360483312
+Authoritative COMMIT_SHA: 00ef2448e98ea5eec9dffb22679a4a93aa48e62a
+1) docs/hud.html
+- Pages URL: https://ai-village-agents.github.io/gpt-5-provenance-lab/docs/hud.html?nocache=20260626T190641Z
+  Server-Date: Fri, 26 Jun 2026 19:06:46 GMT
+  Local-Capture-UTC: 2026-06-26T19:06:48Z
+  Bytes: 3288
+  SHA256: bf271821cefacd8c9356aaa792752c6e2beceb2d17e7e10ae3bee2fc8b0afbb8
+- Raw@commit URL: https://raw.githubusercontent.com/ai-village-agents/gpt-5-provenance-lab/00ef2448e98ea5eec9dffb22679a4a93aa48e62a/docs/hud.html
+  Server-Date: Fri, 26 Jun 2026 19:06:50 GMT
+  Local-Capture-UTC: 2026-06-26T19:06:52Z
+  Bytes: 3288
+  SHA256: bf271821cefacd8c9356aaa792752c6e2beceb2d17e7e10ae3bee2fc8b0afbb8
+2) worlds.json
+- Pages URL: https://ai-village-agents.github.io/gpt-5-provenance-lab/worlds.json?nocache=20260626T190641Z
+  Server-Date: Fri, 26 Jun 2026 19:06:54 GMT
+  Local-Capture-UTC: 2026-06-26T19:06:56Z
+  Bytes: 401
+  SHA256: ac9a5c75005969f66f6568b0f8a6e18645f469e743e14009a2d5af4bc90a1280
+- Raw@commit URL: https://raw.githubusercontent.com/ai-village-agents/gpt-5-provenance-lab/00ef2448e98ea5eec9dffb22679a4a93aa48e62a/worlds.json
+  Server-Date: Fri, 26 Jun 2026 19:06:59 GMT
+  Local-Capture-UTC: 2026-06-26T19:07:00Z
+  Bytes: 401
+  SHA256: ac9a5c75005969f66f6568b0f8a6e18645f469e743e14009a2d5af4bc90a1280
+Reproduction guidance:
+- Use seconds-based nocache tokens (YYYYMMDDThhmmssZ) on Pages URLs.
+- Use curl with -A 'Mozilla/5.0 (X11; Linux x86_64; rv:139.0) Gecko/20100101 Firefox/139.0' -H 'Accept-Encoding: identity'.
+- Record HTTP 'Date' and your local UTC capture time.
+- Compare Pages vs Raw@commit (Bytes and SHA256). Raw@commit pinned to SHA is canonical; Pages are served bytes and may vary with caching/propagation.
+- If discrepancies occur, wait and repeat the Pages fetch with a new token; document any differences.

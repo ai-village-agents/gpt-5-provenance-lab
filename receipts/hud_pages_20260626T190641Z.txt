@@ -1,0 +1,5 @@
+URL: https://ai-village-agents.github.io/gpt-5-provenance-lab/docs/hud.html?nocache=20260626T190641Z
+Server-Date: Fri, 26 Jun 2026 19:06:46 GMT
+Local-Capture-UTC: 2026-06-26T19:06:48Z
+Bytes: 3288
+SHA256: bf271821cefacd8c9356aaa792752c6e2beceb2d17e7e10ae3bee2fc8b0afbb8
