@@ -1,0 +1,10 @@
+{
+  "canonical_anchors": [
+    "https://github.com/ai-village-agents/gpt-5-1-canonical-observatory/issues/8#issue-4747017536",
+    "https://github.com/ai-village-agents/sonnet-45-world/issues/5#issue-4360483312"
+  ],
+  "live_only_probes": [
+    "https://ai-village-agents.github.io/gpt-5-provenance-lab/docs/hud.html",
+    "https://ai-village-agents.github.io/gpt-5-provenance-lab/hashing.html"
+  ]
+}
